@@ -27,7 +27,7 @@ UPX_FLAGS ?= --best --lzma
 
 all: build-all
 
-test: test-web
+test: test-web frontend-dist
 	go test ./...
 
 test-web:

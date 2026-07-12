@@ -172,7 +172,7 @@ npm run build
 后端测试：
 
 ```bash
-GOTOOLCHAIN=go1.26.5 go test ./...
+make test
 ```
 
 ## 发布包与架构校验
