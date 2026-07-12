@@ -2,6 +2,8 @@
 
 > voHive的低劣模仿者（codex版）
 
+![voHub 宣传海报](assets/marketing/poster.png)
+
 移动网络模组管理面板，支持设备、网络、短信、代理、eSIM、VoWiFi 和通知管理。
 当前为早期预发布版本。
 
