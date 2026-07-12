@@ -1,0 +1,17 @@
+services:
+  vohub:
+    build:
+      context: .
+    image: vohub:local
+    container_name: vohub
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - /dev:/dev
+    environment:
+      TZ: Asia/Shanghai
+      CONFIG_PATH: /app/config/config.yaml

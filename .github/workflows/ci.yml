@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --prefix web
+      - run: npm test --prefix web
+      - run: npm run test:contract --prefix web
+      - run: npm run typecheck --prefix web
+      - run: npm run lint --prefix web
+      - run: npm run build --prefix web
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go test ./...
+      - run: make build-amd64 build-armv7 VERSION=ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vohub-linux-targets
+          path: |
+            dist/vohub_*_linux_amd64
+            dist/vohub_*_linux_armv7
+          if-no-files-found: error
+
+  mac-arm64:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go test ./...
+      - run: make package-mac-arm64 VERSION=ci
+      - run: make package-mac-amd64 VERSION=ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vohub-darwin-arm64
+          path: |
+            dist/vohub_*_darwin_arm64
+            dist/vohub_*_darwin_arm64.tar.gz
+            dist/vohub_*_darwin_arm64.tar.gz.sha256
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vohub-darwin-amd64
+          path: |
+            dist/vohub_*_darwin_amd64
+            dist/vohub_*_darwin_amd64.tar.gz
+            dist/vohub_*_darwin_amd64.tar.gz.sha256
+          if-no-files-found: error
