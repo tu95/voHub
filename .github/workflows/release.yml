@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --prefix web
+      - name: Build all targets
+        run: make build-all VERSION="$GITHUB_REF_NAME"
+      - name: Package and checksum
+        run: |
+          set -eu
+          cd dist
+          for file in vohub_${GITHUB_REF_NAME}_linux_amd64 \
+                      vohub_${GITHUB_REF_NAME}_linux_arm64 \
+                      vohub_${GITHUB_REF_NAME}_linux_armv7 \
+                      vohub_${GITHUB_REF_NAME}_darwin_arm64 \
+                      vohub_${GITHUB_REF_NAME}_darwin_amd64; do
+            sha256sum "$file" > "$file.sha256"
+          done
+          tar -czf "vohub_${GITHUB_REF_NAME}_darwin_arm64.tar.gz" "vohub_${GITHUB_REF_NAME}_darwin_arm64"
+          tar -czf "vohub_${GITHUB_REF_NAME}_darwin_amd64.tar.gz" "vohub_${GITHUB_REF_NAME}_darwin_amd64"
+          sha256sum "vohub_${GITHUB_REF_NAME}_darwin_arm64.tar.gz" > "vohub_${GITHUB_REF_NAME}_darwin_arm64.tar.gz.sha256"
+          sha256sum "vohub_${GITHUB_REF_NAME}_darwin_amd64.tar.gz" > "vohub_${GITHUB_REF_NAME}_darwin_amd64.tar.gz.sha256"
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/vohub_* --generate-notes --title "voHub $GITHUB_REF_NAME"

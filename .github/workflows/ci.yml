@@ -34,6 +34,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+      - run: npm ci --prefix web
       - run: make frontend-dist
       - run: go test ./...
       - run: make build-amd64 build-armv7 VERSION=ci
@@ -56,6 +57,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+      - run: npm ci --prefix web
       - run: make frontend-dist
       - run: go test ./...
       - run: make package-mac-arm64 VERSION=ci

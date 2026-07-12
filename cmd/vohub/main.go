@@ -13,6 +13,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/iniwex5/vowifi-go/runtimehost/carrier"
+	"github.com/iniwex5/vowifi-go/runtimehost/voicehost"
 	"github.com/tu95/vohub/internal/api"
 	"github.com/tu95/vohub/internal/config"
 	"github.com/tu95/vohub/internal/db"
@@ -21,8 +23,6 @@ import (
 	proxyserver "github.com/tu95/vohub/internal/proxy/server"
 	"github.com/tu95/vohub/internal/proxy/traffic"
 	"github.com/tu95/vohub/internal/upstreamproxy"
-	"github.com/iniwex5/vowifi-go/runtimehost/carrier"
-	"github.com/iniwex5/vowifi-go/runtimehost/voicehost"
 
 	"github.com/tu95/vohub/internal/web"
 	"github.com/tu95/vohub/pkg/logger"
@@ -37,6 +37,13 @@ func main() {
 	flag.Parse()
 	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
 		log.Fatalf("初始化配置目录失败: %v", err)
+	}
+	created, err := config.EnsureDefaultFile(configPath)
+	if err != nil {
+		log.Fatalf("初始化默认配置失败: %v", err)
+	}
+	if created {
+		log.Printf("未找到配置文件，已创建默认配置: %s", configPath)
 	}
 
 	// 1. 加载配置
