@@ -40,8 +40,13 @@ esac
 target="${os}_${arch}"
 
 if [ -z "$version" ]; then
-  latest_url=$(curl -fsSL -o /dev/null -w '%{url_effective}' "https://github.com/$repo/releases/latest")
-  version=${latest_url##*/}
+  version=$(curl -fsSL "https://api.github.com/repos/$repo/releases?per_page=1" |
+    sed -n 's/^[[:space:]]*"tag_name":[[:space:]]*"\([^"]*\)".*$/\1/p' |
+    head -n 1)
+  if [ -z "$version" ]; then
+    echo "Release not found." >&2
+    exit 1
+  fi
 fi
 
 case "$version" in
