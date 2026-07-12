@@ -6,14 +6,14 @@
 
 ## 一键安装并启动
 
-Linux 执行这一条即可：
+Linux 或 macOS 执行这一条即可：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tu95/voHub/main/scripts/install.sh | sudo bash
 ```
 
-脚本会自动识别 amd64、arm64、armv7，下载并校验对应的 Release 二进制，
-安装后直接启动。访问：
+脚本会自动识别系统和 CPU 架构，下载并校验对应的 Release 二进制，安装后
+直接启动。支持 Linux amd64/arm64/armv7 和 macOS amd64/arm64。访问：
 
 ```text
 http://设备IP:8000/

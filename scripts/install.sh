@@ -14,22 +14,30 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 case "$(uname -s)" in
-  Linux) ;;
+  Linux) os="linux" ;;
+  Darwin) os="darwin" ;;
   *)
-    echo "This installer supports Linux only." >&2
+    echo "Unsupported OS: $(uname -s)" >&2
     exit 1
     ;;
 esac
 
 case "$(uname -m)" in
-  x86_64|amd64) target="linux_amd64" ;;
-  aarch64|arm64) target="linux_arm64" ;;
-  armv7l|armv7) target="linux_armv7" ;;
+  x86_64|amd64) arch="amd64" ;;
+  aarch64|arm64) arch="arm64" ;;
+  armv7l|armv7)
+    if [ "$os" != "linux" ]; then
+      echo "Unsupported architecture: $(uname -m)" >&2
+      exit 1
+    fi
+    arch="armv7"
+    ;;
   *)
     echo "Unsupported architecture: $(uname -m)" >&2
     exit 1
     ;;
 esac
+target="${os}_${arch}"
 
 if [ -z "$version" ]; then
   latest_url=$(curl -fsSL -o /dev/null -w '%{url_effective}' "https://github.com/$repo/releases/latest")
@@ -62,7 +70,7 @@ curl -fL "$base_url/$asset.sha256" -o "$tmp_dir/$asset.sha256"
   fi
 )
 
-install -d -m 0755 "$binary_dir" "$install_root/config" "$install_root/data" "$install_root/logs"
+install -d -m 0755 "$binary_dir" "$install_root/config" "$install_root/data" "$install_root/logs" "$(dirname "$command_path")"
 install -m 0755 "$tmp_dir/$asset" "$binary_dir/vohub"
 
 launcher_tmp="$tmp_dir/vohub-launcher"
