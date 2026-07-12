@@ -123,7 +123,7 @@ func ApplyUpdate() error {
 		return fmt.Errorf("failed to decode release info: %w", err)
 	}
 
-	// 拼接对应的 asset name。例如: vohub_v1.0.0_linux_amd64
+	// 拼接对应的 asset name。例如: vohub_v0.0.1_linux_amd64
 	targetGoos := runtime.GOOS
 	targetGoarch := runtime.GOARCH
 	if targetGoarch == "arm" {

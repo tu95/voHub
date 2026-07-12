@@ -63,13 +63,13 @@ make build-all         # 全部平台
 编译结果在 `dist/`。例如 Linux ARM64：
 
 ```bash
-sudo ./dist/vohub_v1.0.0_linux_arm64
+sudo ./dist/vohub_v0.0.1_linux_arm64
 ```
 
 macOS Apple Silicon：
 
 ```bash
-./dist/vohub_v1.0.0_darwin_arm64
+./dist/vohub_v0.0.1_darwin_arm64
 ```
 
 配置不存在时程序会自动创建 `config/config.yaml`。需要指定其他路径时使用：

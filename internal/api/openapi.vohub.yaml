@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: voHub Main API
-  version: 1.0.0
+  version: 0.0.1
   description: |
     voHub 主服务控制面 API。
     - 服务器前缀：`/api`

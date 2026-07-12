@@ -6,7 +6,7 @@ COPY web/ ./
 RUN npm run build
 
 FROM golang:1.26.5-alpine AS backend-builder
-ARG VERSION=v1.0.0
+ARG VERSION=v0.0.1
 ARG BUILD_TIME=unknown
 WORKDIR /src
 RUN apk add --no-cache git
